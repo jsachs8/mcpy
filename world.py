@@ -76,20 +76,21 @@ class World:
                     print(dat)
                     count -= 1
 
-    def print_spawner_data(self):
+    def get_tile_entities(self):
+        entities = []
         for k in self.db.keys():
             if keys.is_block_entities(k):
                 data = self.db.get(k)
                 reader = nbt.BinaryReader(data)
                 while not reader.finished():
                     obj = nbt.decode(reader)
-                    x = obj.x
-                    y = obj.y
-                    z = obj.z
-                    what = obj.id
-                    if what == 'MobSpawner':
-                        which = obj.EntityIdentifier
-                        print(f"{x},{y},{z},{which}")
+                    entities.append(obj)
+        return entities
+
+    def print_spawner_data(self):
+        for entity in self.get_tile_entities():
+            if entity.id == 'MobSpawner':
+                print(f"{entity.x},{entity.y},{entity.z},{entity.EntityIdentifier}")
 
     def print_player_data(self):
         for item in self.get_player_data():
