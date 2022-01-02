@@ -129,10 +129,11 @@ class TAG_Byte:
         writer.put1(self.val)
 
     def __repr__(self):
-        return f"TAG_Byte({self.val})"
+        return str(self.val)
 
     def __str__(self):
-        return f"{self.val}"
+        return str(self.val)
+
 
 class TAG_Short:
     def __init__(self, val=None):
@@ -147,7 +148,10 @@ class TAG_Short:
         writer.put2(self.val)
 
     def __repr__(self):
-        return f"TAG_Short({self.val})"
+        return str(self.val)
+
+    def __str__(self):
+        return str(self.val)
 
 
 class TAG_Int:
@@ -163,10 +167,10 @@ class TAG_Int:
         writer.put4(self.val)
 
     def __repr__(self):
-        return f"TAG_Int({self.val})"
+        return str(self.val)
 
     def __str__(self):
-        return f"{self.val}"
+        return str(self.val)
 
 
 class TAG_Long:
@@ -182,10 +186,10 @@ class TAG_Long:
         writer.put8(self.val)
 
     def __repr__(self):
-        return f"TAG_Long({self.val})"
+        return str(self.val)
 
     def __str__(self):
-        return f"{self.val}"
+        return str(self.val)
 
 
 class TAG_Float:
@@ -201,10 +205,10 @@ class TAG_Float:
         writer.putf(self.val)
 
     def __repr__(self):
-        return f"TAG_Float({self.val})"
+        return str(self.val)
 
     def __str__(self):
-        return f"{self.val}"
+        return str(self.val)
 
 
 class TAG_Double:
@@ -220,7 +224,10 @@ class TAG_Double:
         writer.putd(self.val)
 
     def __repr__(self):
-        return f"TAG_Double({self.val})"
+        return str(self.val)
+
+    def __str__(self):
+        return str(self.val)
 
 
 class TAG_Byte_Array:
@@ -278,7 +285,7 @@ class TAG_String:
         writer.put_bytes(string)
 
     def __repr__(self):
-        return f"TAG_String({self.val})"
+        return f"'{self.val}'"
 
     def __str__(self):
         return f"{self.val}"
@@ -309,10 +316,10 @@ class TAG_List:
             elem.encode(writer)
 
     def __repr__(self):
-        return f"TAG_List({self.val})"
+        return str(self.val)
 
     def __str__(self):
-        return f"{self.val}"
+        return str(self.val)
 
 
 class TAG_Compound:
@@ -341,10 +348,10 @@ class TAG_Compound:
         writer.put1(0)
 
     def __repr__(self):
-        return f"TAG_Compound({self.val})"
+        return str(self.val)
 
     def __str__(self):
-        return f"{self.val}"
+        return str(self.val)
 
     def __getitem__(self, item):
         return self.val[item]

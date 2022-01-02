@@ -26,8 +26,12 @@ world.list_worlds()
 
 wname = "4eFtYUGlAAA="
 w = world.World(wname)
+w.print_level_data()
 w.print_spawner_data()
 w.print_hsa_data()
+w.print_player_data()
+
+
 
 
 

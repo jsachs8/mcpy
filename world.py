@@ -63,6 +63,7 @@ class World:
         self.dpath = os.path.join(worlds_data_dir, wname, 'db')
         self.lpath = os.path.join(worlds_data_dir, wname, 'level.dat')
         self.db = LevelDB(self.dpath, create_if_missing=False)
+        self.obj = read_leveldat(self.lpath)
 
     def print_hsa_data(self):
         for k in self.db.keys():
@@ -89,6 +90,26 @@ class World:
                     if what == 'MobSpawner':
                         which = obj.EntityIdentifier
                         print(f"{x},{y},{z},{which}")
+
+    def print_player_data(self):
+        for item in self.get_player_data():
+            print(f"{item[0]}: {item[1]}")
+
+    def get_player_data(self):
+        players = []
+        for k in self.db.keys():
+            if k == b"~local_player" or k.startswith(b"player_"):
+                data = self.db.get(k)
+                reader = nbt.BinaryReader(data)
+                p = nbt.decode(reader)
+                players.append((k, p))
+        return players
+
+    def get_level_data(self):
+        return read_leveldat(self.lpath)
+
+    def print_level_data(self):
+        print(f"level.dat: {self.get_level_data()}")
 
 
 
