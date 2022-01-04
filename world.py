@@ -23,7 +23,7 @@ import os
 import datetime as dt
 
 import nbt
-import keys
+import key
 from hsa import HSA
 
 
@@ -67,7 +67,7 @@ class World:
 
     def print_hsa_data(self):
         for k in self.db.keys():
-            if keys.is_hsa(k):
+            if key.is_hsa(k):
                 data = self.db.get(k)
                 reader = nbt.BinaryReader(data)
                 count = reader.get4()
@@ -79,7 +79,7 @@ class World:
     def get_tile_entities(self):
         entities = []
         for k in self.db.keys():
-            if keys.is_block_entities(k):
+            if key.is_block_entities(k):
                 data = self.db.get(k)
                 reader = nbt.BinaryReader(data)
                 while not reader.finished():

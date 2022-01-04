@@ -26,7 +26,7 @@ import nbt
 
 class HSAType(Enum):
     FORTRESS = 1
-    WITCH_HUT = 2
+    SWAMPHUT = 2
     MONUMENT = 3
     OUTPOST = 5
 
@@ -51,7 +51,7 @@ class HSA:
         return HSA(type, pos1, pos2)
 
     def spot(self):
-        if self.type in (HSAType.WITCH_HUT, HSAType.OUTPOST):
+        if self.type in (HSAType.SWAMPHUT, HSAType.OUTPOST):
             offset = -3
         else:
             offset = 0
@@ -63,5 +63,5 @@ class HSA:
         return f"x={xmid} y={ymin}:{ymax} z={zmid}"
 
     def __str__(self):
-        return f"{self.type.name} {self.pos1}->{self.pos2} hss={self.spot()}"
+        return f"{self.type.name} {self.pos1}->{self.pos2} hss @ {self.spot()}"
 
