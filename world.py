@@ -24,6 +24,7 @@ import datetime as dt
 
 import nbt
 import key
+import blockdata
 from hsa import HSA
 
 
@@ -111,6 +112,59 @@ class World:
 
     def print_level_data(self):
         print(f"level.dat: {self.get_level_data()}")
+
+    def get_block(self, x, y, z, dim=0):
+        k = blockdata.key(x, y, z, dim)
+        # print(k)
+        try:
+            v = self.db.get(k)
+        except KeyError:
+            print('Chunk not found')
+            return
+
+        r = nbt.BinaryReader(v)
+        version = r.get1()
+        count = r.get("B")
+        if version == 9:
+            offset = r.get("b")
+        st = blockdata.read_storage(r)
+        if count == 2:
+            wl = blockdata.read_storage(r)  # water logging info
+
+        xo = x % 16
+        yo = y % 16
+        zo = z % 16
+
+        offset = xo * 256 + zo * 16 + yo
+        i = st[1][offset]
+        b = st[0][i]
+        print(f"{x},{y},{z},{b}")
+
+    def dump_subchunk(self, x, y, z, dim=0):
+        k = blockdata.key(x, y, z, dim)
+        # print(k)
+        try:
+            v = self.db.get(k)
+        except KeyError:
+            print('Chunk not found')
+            return
+
+        r = nbt.BinaryReader(v)
+        version = r.get1()
+        count = r.get("B")
+        if version == 9:
+            offset = r.get("b")
+        st = blockdata.read_storage(r)
+        if count == 2:
+            wl = blockdata.read_storage(r)
+
+        for o in range(4096):
+            i = st[1][o]
+            b = st[0][i]
+            print(f"{hex(o)}, {i}, {b.name}")
+
+        print(len(st[1]))
+
 
 
 

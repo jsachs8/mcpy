@@ -55,8 +55,8 @@ class HSA:
             offset = -3
         else:
             offset = 0
-        xmid = (self.pos1[0] + self.pos2[0]) // 2
-        zmid = (self.pos1[2] + self.pos2[2]) // 2
+        xmid = (self.pos1[0] + self.pos2[0] + 1) // 2
+        zmid = (self.pos1[2] + self.pos2[2] + 1) // 2
         ymin = self.pos1[1]
         ymax = self.pos2[1] + offset
 

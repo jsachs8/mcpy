@@ -21,16 +21,19 @@ SOFTWARE.
 """
 import world
 
-
 world.list_worlds()
 
 wname = "4eFtYUGlAAA="
 wname = "HOu3YcGsZwA="
 w = world.World(wname)
-w.print_level_data()
-w.print_spawner_data()
-w.print_hsa_data()
-w.print_player_data()
+# w.print_level_data()
+# w.print_spawner_data()
+# w.print_hsa_data()
+# w.print_player_data()
+
+w.get_block(696, 63, 1581)
+
+
 
 
 
