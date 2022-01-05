@@ -73,6 +73,9 @@ class BinaryReader:
     def __repr__(self):
         return str(self.data[self.pos:])
 
+    def remainder(self):
+        return len(self.data) - self.pos
+
 
 # Allows for easy sequential writing of binary data.
 class BinaryWriter:

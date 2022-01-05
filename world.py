@@ -80,7 +80,7 @@ class World:
     def get_tile_entities(self):
         entities = []
         for k in self.db.keys():
-            if key.is_block_entities(k):
+            if key.is_tile_entities(k):
                 data = self.db.get(k)
                 reader = nbt.BinaryReader(data)
                 while not reader.finished():
@@ -113,6 +113,7 @@ class World:
     def print_level_data(self):
         print(f"level.dat: {self.get_level_data()}")
 
+    # get the block at a position
     def get_block(self, x, y, z, dim=0):
         k = blockdata.key(x, y, z, dim)
         # print(k)
@@ -138,8 +139,31 @@ class World:
         offset = xo * 256 + zo * 16 + yo
         i = st[1][offset]
         b = st[0][i]
-        print(f"{x},{y},{z},{b}")
+        return b
 
+    # get the biome value for a position
+    def get_biome(self, x, y, z, dim=0):
+        k = key.data3d_key(x, z, dim=dim)
+        v = self.db.get(k)
+        r = nbt.BinaryReader(v)
+        h = []
+        for i in range(256):
+            t = r.get2()
+            h.append(t)
+        # print(h)
+        # print(r3)
+
+        yc = (y + 64) // 16
+        for ndx in range(24):
+            palette, data = blockdata.read_biomes(r)
+            if ndx == yc:
+                yo = (y + 64) % 16
+                xo = x % 16
+                zo = z % 16
+                offset = xo * 256 + zo * 16 + yo
+                return palette[data[offset]]
+
+    # dump the subchunk data for a position
     def dump_subchunk(self, x, y, z, dim=0):
         k = blockdata.key(x, y, z, dim)
         # print(k)
@@ -165,10 +189,20 @@ class World:
 
         print(len(st[1]))
 
+    # Dump the height map and biome data for a position
+    def dump_data_3d(self, x, z, dim=0):
+        k = key.data3d_key(x, z, dim=dim)
+        v = self.db.get(k)
+        r3 = nbt.BinaryReader(v)
+        h = []
+        for i in range(256):
+            t = r3.get2()
+            h.append(t)
+        print(h)  # height map
 
-
-
-
+        for ndx in range(24):
+            palette, data = blockdata.read_biomes(r)
+            print(ndx, palette, data)
 
 
 

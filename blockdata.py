@@ -65,14 +65,52 @@ def read_storage(reader):
         palette_count = reader.get("<I")
 
     # read the palette
-    # print(count)
-    # print(reader)
     palette = []
     for i in range(palette_count):
         item = nbt.decode(reader)
         palette.append(item)
-    # print(palette)
-    # print(data)
+    return palette, data
+
+
+def read_biomes(reader):
+    data = []
+    flags = reader.get("B")
+    if flags == 255:
+        for i in range(4096):
+            data.append(0)
+        return [0], data
+
+    # print(reader.remainder())
+    bits_per_block = flags >> 1
+    # print(f"bits per block = {bits_per_block}")
+    if bits_per_block == 0:
+        for i in range(4096):
+            data.append(0)
+        palette_count = 1
+    else:
+        blocks_per_word = 32 // bits_per_block
+        num_words = (4096 + blocks_per_word - 1) // blocks_per_word
+        mask = (1 << bits_per_block) - 1  # assume 2-s complement
+
+        pos = 0
+        for i in range(num_words):
+            word = reader.get("<I")
+            for _ in range(blocks_per_word):
+                val = word & mask
+                if pos == 4096:
+                    break
+                data.append(val)
+                word = word >> bits_per_block
+                pos += 1
+
+        palette_count = reader.get("<I")
+
+    # read the palette
+    palette = []
+    for i in range(palette_count):
+        item = reader.get4()
+        palette.append(item)
+
     return palette, data
 
 
