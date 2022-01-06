@@ -25,9 +25,9 @@ import struct
 
 
 class KeyType(Enum):
-    Data3D = 43             # TODO: what is the format
+    Data3D = 43             # see world.get_biome_3d
     Version = 44            # byte
-    Data2D = 45             # TODO: what is the format
+    Data2D = 45             # set world.get_biome()
     BlockStorage = 47       # see blockdata.py
     TileEntities = 49       # count followed by NBT objects
     Entities = 50           # sequence of NBT objects
@@ -119,6 +119,14 @@ def is_data_3d(k):
     return False
 
 
+def is_data_2d(k):
+    if len(k) == 9 and k[8] == KeyType.Data2D.value:
+        return True
+    if len(k) == 13 and k[12] == KeyType.Data2D.value:
+        return True
+    return False
+
+
 def is_map(k):
     if k.startswith(b"map_"):
         return True
@@ -133,6 +141,15 @@ def is_biome_states(k):
     return False
 
 
+def is_tagged(k, tag):
+    if len(k) == 9 and k[8] == tag:
+        return True
+    if len(k) == 13 and k[12] == tag:
+        return True
+    return False
+
+
+
 def data3d_key(x, z, dim=0):
     xc = x // 16
     zc = z // 16
@@ -141,3 +158,13 @@ def data3d_key(x, z, dim=0):
         return struct.pack("<iib", xc, zc, 43)
     else:
         return struct.pack("<iiib", xc, zc, dim, 43)
+
+
+def data2d_key(x, z, dim=0):
+    xc = x // 16
+    zc = z // 16
+    if dim == 0:
+        # print(f"chunk {xc}, {zc}")
+        return struct.pack("<iib", xc, zc, 45)
+    else:
+        return struct.pack("<iiib", xc, zc, dim, 45)

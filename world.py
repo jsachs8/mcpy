@@ -24,6 +24,7 @@ import datetime as dt
 
 import nbt
 import key
+import binary
 import blockdata
 from hsa import HSA
 
@@ -35,7 +36,7 @@ mcpe_datadir = os.path.expandvars(r'%LOCALAPPDATA%\Packages\Microsoft.MinecraftU
 worlds_data_dir = os.path.join(mcpe_datadir, r'LocalState/games/com.mojang/minecraftWorlds')
 
 
-def list_worlds():
+def get_worlds():
     worlds = os.listdir(worlds_data_dir)
     tuples = []
     for world in worlds:
@@ -45,14 +46,19 @@ def list_worlds():
             obj = read_leveldat(lpath)
             tuples.append((world, obj.LevelName, dt.datetime.fromtimestamp(obj.LastPlayed)))
     tuples = sorted(tuples, key=lambda x: x[2], reverse=True)
-    for tup in tuples:
-        print(f"{tup[0]} -- {tup[2]} -- {tup[1]}")
+    return tuples
+
+
+def list_worlds():
+    worlds = get_worlds()
+    for world in worlds:
+        print(f"{world[0]} -- {world[2]} -- {world[1]}")
 
 
 def read_leveldat(path):
     with open(path, 'rb') as f:
         data = f.read()
-        reader = nbt.BinaryReader(data)
+        reader = binary.Reader(data)
         version = reader.get('<i')
         length = reader.get('<i')
         obj = nbt.decode(reader)
@@ -70,7 +76,7 @@ class World:
         for k in self.db.keys():
             if key.is_hsa(k):
                 data = self.db.get(k)
-                reader = nbt.BinaryReader(data)
+                reader = binary.Reader(data)
                 count = reader.get4()
                 while count > 0:
                     dat = HSA.decode(reader)
@@ -82,7 +88,7 @@ class World:
         for k in self.db.keys():
             if key.is_tile_entities(k):
                 data = self.db.get(k)
-                reader = nbt.BinaryReader(data)
+                reader = binary.Reader(data)
                 while not reader.finished():
                     obj = nbt.decode(reader)
                     entities.append(obj)
@@ -102,7 +108,7 @@ class World:
         for k in self.db.keys():
             if k == b"~local_player" or k.startswith(b"player_"):
                 data = self.db.get(k)
-                reader = nbt.BinaryReader(data)
+                reader = binary.Reader(data)
                 p = nbt.decode(reader)
                 players.append((k, p))
         return players
@@ -123,7 +129,7 @@ class World:
             print('Chunk not found')
             return
 
-        r = nbt.BinaryReader(v)
+        r = binary.Reader(v)
         version = r.get1()
         count = r.get("B")
         if version == 9:
@@ -141,11 +147,32 @@ class World:
         b = st[0][i]
         return b
 
-    # get the biome value for a position
     def get_biome(self, x, y, z, dim=0):
+        try:
+            k = key.data2d_key(x, z, dim=dim)
+            v = self.db.get(k)
+            r = binary.Reader(v)
+            h = []
+            for i in range(256):
+                t = r.get2()
+                h.append(t)
+            b = []
+            for i in range(256):
+                t = r.get1()
+                b.append(t)
+
+            xo = x % 16
+            zo = z % 16
+            return b[xo*16 + zo]
+
+        except KeyError:
+            return self.get_biome_3d(x, y, z, dim)
+
+    # get the biome value for a position
+    def get_biome_3d(self, x, y, z, dim=0):
         k = key.data3d_key(x, z, dim=dim)
         v = self.db.get(k)
-        r = nbt.BinaryReader(v)
+        r = binary.Reader(v)
         h = []
         for i in range(256):
             t = r.get2()
@@ -173,7 +200,7 @@ class World:
             print('Chunk not found')
             return
 
-        r = nbt.BinaryReader(v)
+        r = binary.Reader(v)
         version = r.get1()
         count = r.get("B")
         if version == 9:
@@ -193,10 +220,10 @@ class World:
     def dump_data_3d(self, x, z, dim=0):
         k = key.data3d_key(x, z, dim=dim)
         v = self.db.get(k)
-        r3 = nbt.BinaryReader(v)
+        r = binary.Reader(v)
         h = []
         for i in range(256):
-            t = r3.get2()
+            t = r.get2()
             h.append(t)
         print(h)  # height map
 

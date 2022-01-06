@@ -247,7 +247,7 @@ class LevelDB:
 
         self.db = db
 
-    def close(self, compact=True):
+    def close(self, compact=False):
         """
         Close the leveldb database.
 

@@ -19,61 +19,98 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import blockdata
+import world
+import binary
 import key
 import nbt
-import world
+
 
 world.list_worlds()
 
 wname = "4eFtYUGlAAA="
-wname = "HOu3YcGsZwA="
+# wname = "HOu3YcGsZwA="
+wname = "ceHVYYiJAAA="
 w = world.World(wname)
-# w.print_level_data()
+w.print_level_data()
 w.print_spawner_data()
-# w.print_hsa_data()
-# w.print_player_data()
+w.print_hsa_data()
+w.print_player_data()
 
-biome = w.get_biome(-13, -24, 886)
-blk = w.get_block(-13, -24, 886)
+# biome = w.get_biome(0, -64, 0)
+biome = None
+blk = w.get_block(0, 0, 0)
 print(f"biome={biome} block={blk}")
 
 
-'''
-for k, v in w.db.iterate():
-    if key.is_block_storage(k):
-        pass
-    elif key.is_version(k):
-        pass
-    elif key.is_legacy_generation(k):
-        pass
-    elif key.is_finalization(k):
-        pass
-    elif key.is_data_3d(k):
-        pass
-    elif key.is_tile_entities(k):
-        pass
-    elif key.is_hsa(k):
-        pass
-    elif key.is_pending_block_ticks(k):
-        pass
-    elif key.is_random_block_ticks(k):
-        pass
-    elif key.is_map(k):
-        pass
-    elif key.is_biome_states(k):
-        pass
-    elif key.is_entities(k):
-        pass
-    elif len(v) > 0:
-        print(f"{k}")
-        reader = nbt.BinaryReader(v)
-        while not reader.finished():
-            obj = nbt.decode(reader)
-            print(obj)
-'''
+def check(world):
+    flag = True
+    flag62 = True
+    for k, v in world.db.iterate():
+        if key.is_block_storage(k):
+            pass
+        elif key.is_version(k):
+            pass
+        elif key.is_legacy_generation(k):
+            pass
+        elif key.is_finalization(k):
+            pass
+        elif key.is_data_3d(k):
+            pass
+        elif key.is_tile_entities(k):
+            pass
+        elif key.is_hsa(k):
+            pass
+        elif key.is_pending_block_ticks(k):
+            pass
+        elif key.is_random_block_ticks(k):
+            pass
+        elif key.is_map(k):
+            pass
+        elif key.is_biome_states(k):
+            pass
+        # elif key.is_entities(k):
+        #    pass
+        elif key.is_data_2d(k):
+            pass
+        elif key.is_tagged(k, 62):
+            # unknown
+            if flag62:
+                print(k, v)
+                flag62 = False
+            pass
+        elif key.is_tagged(k, 59):
+            # checksums
+            pass
+        elif key.is_tagged(k, 55):
+            # conversion data
+            if flag:
+                print(k, v)
+                flag = False
+            pass
+        elif key.is_tagged(k, 118):
+            # legacy version
+            pass
+        elif k.startswith(b"VILLAGE_"):
+            pass
+        elif len(v) > 0 and v[0] == 10:
+            print(f"{k}")
+            reader = binary.Reader(v)
+            while not reader.finished():
+                obj = nbt.decode(reader)
+                print(obj)
+        else:
+            print(f"******** {k} --> {v} ********")
 
 
+check(w)
+
+exit(0)
+
+worlds = world.get_worlds()
+for w in worlds:
+    print(w)
+    ldb = world.World(w[0])
+    check(ldb)
 
 
 
