@@ -34,11 +34,7 @@ class TAG_Byte:
         writer.put1(self.val)
 
     def __repr__(self):
-        return str(self.val)
-
-    def __str__(self):
-        return str(self.val)
-
+        return repr(self.val) + "b"
 
 class TAG_Short:
     def __init__(self, val=None):
@@ -53,11 +49,7 @@ class TAG_Short:
         writer.put2(self.val)
 
     def __repr__(self):
-        return str(self.val)
-
-    def __str__(self):
-        return str(self.val)
-
+        return repr(self.val) + "S"
 
 class TAG_Int:
     def __init__(self, val=None):
@@ -72,11 +64,7 @@ class TAG_Int:
         writer.put4(self.val)
 
     def __repr__(self):
-        return str(self.val)
-
-    def __str__(self):
-        return str(self.val)
-
+        return repr(self.val)
 
 class TAG_Long:
     def __init__(self, val=None):
@@ -91,10 +79,7 @@ class TAG_Long:
         writer.put8(self.val)
 
     def __repr__(self):
-        return str(self.val)
-
-    def __str__(self):
-        return str(self.val)
+        return repr(self.val) + "L"
 
 
 class TAG_Float:
@@ -110,10 +95,7 @@ class TAG_Float:
         writer.putf(self.val)
 
     def __repr__(self):
-        return str(self.val)
-
-    def __str__(self):
-        return str(self.val)
+        return repr(self.val) + "F"
 
 
 class TAG_Double:
@@ -129,10 +111,8 @@ class TAG_Double:
         writer.putd(self.val)
 
     def __repr__(self):
-        return str(self.val)
+        return repr(self.val)
 
-    def __str__(self):
-        return str(self.val)
 
 
 class TAG_Byte_Array:
@@ -166,7 +146,7 @@ class TAG_Byte_Array:
         return self.val[ndx]
 
     def __str__(self):
-        return '[' + ",".join([str(x) for x in self.val]) + ']'
+        return '[B;' + ",".join([str(x) + 'B' for x in self.val]) + ']'
 
 
 class TAG_String:
@@ -190,10 +170,7 @@ class TAG_String:
         writer.put_bytes(string)
 
     def __repr__(self):
-        return f"'{self.val}'"
-
-    def __str__(self):
-        return f"{self.val}"
+        return f'"{self.val}"'
 
 
 class TAG_List:
@@ -221,10 +198,7 @@ class TAG_List:
             elem.encode(writer)
 
     def __repr__(self):
-        return str(self.val)
-
-    def __str__(self):
-        return str(self.val)
+        return '[' + ",".join([repr(x) for x in self.val]) + ']'
 
 
 class TAG_Compound:
@@ -253,10 +227,7 @@ class TAG_Compound:
         writer.put1(0)
 
     def __repr__(self):
-        return str(self.val)
-
-    def __str__(self):
-        return str(self.val)
+        return '{' + ", ".join([f"{x[0]}: {x[1]}" for x in self.val.items()]) + '}'
 
     def __getitem__(self, item):
         return self.val[item]
@@ -289,7 +260,7 @@ class TAG_Int_Array:
             writer.put4(elem)
 
     def __repr__(self):
-        return f"TAG_Int_Array({self.val})"
+        return '[I;' + ",".join([repr(x) for x in self.val]) + ']'
 
 
 class TAG_Long_Array:
@@ -313,7 +284,7 @@ class TAG_Long_Array:
             writer.put8(elem)
 
     def __repr__(self):
-        return f"TAG_Long_Array({self.val})"
+        return '[L;' + ",".join([repr(x) + 'L' for x in self.val]) + ']'
 
 
 tags = [None,
