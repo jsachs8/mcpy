@@ -25,6 +25,7 @@ import datetime as dt
 import nbt
 import key
 import binary
+import level
 import blockdata
 from hsa import HSA
 
@@ -43,8 +44,8 @@ def get_worlds():
         wpath = os.path.join(worlds_data_dir, world)
         lpath = os.path.join(wpath, "level.dat")
         if os.path.isfile(lpath):
-            obj = read_leveldat(lpath)
-            tuples.append((world, obj.LevelName, dt.datetime.fromtimestamp(obj.LastPlayed)))
+            obj = level.LevelData(lpath)
+            tuples.append((world, obj.nbt.LevelName, dt.datetime.fromtimestamp(obj.nbt.LastPlayed)))
     tuples = sorted(tuples, key=lambda x: x[2], reverse=True)
     return tuples
 
@@ -55,22 +56,12 @@ def list_worlds():
         print(f"{world[0]} -- {world[2]} -- {world[1]}")
 
 
-def read_leveldat(path):
-    with open(path, 'rb') as f:
-        data = f.read()
-        reader = binary.Reader(data)
-        version = reader.get('<i')
-        length = reader.get('<i')
-        obj = nbt.decode(reader)
-    return obj
-
-
 class World:
     def __init__(self, wname):
         self.dpath = os.path.join(worlds_data_dir, wname, 'db')
         self.lpath = os.path.join(worlds_data_dir, wname, 'level.dat')
         self.db = LevelDB(self.dpath, create_if_missing=False)
-        self.obj = read_leveldat(self.lpath)
+        self.obj = level.LevelData(self.lpath)
 
     def print_hsa_data(self):
         for k in self.db.keys():
@@ -112,12 +103,6 @@ class World:
                 p = nbt.decode(reader)
                 players.append((k, p))
         return players
-
-    def get_level_data(self):
-        return read_leveldat(self.lpath)
-
-    def print_level_data(self):
-        print(f"level.dat: {self.get_level_data()}")
 
     # get the block at a position
     def get_block(self, x, y, z, dim=0):

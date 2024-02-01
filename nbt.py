@@ -232,6 +232,9 @@ class TAG_Compound:
     def __getitem__(self, item):
         return self.val[item]
 
+    def __setitem__(self, item, value):
+        self.val[item].val = value
+
     def __getattr__(self, item):
         return self.val[item].val
 

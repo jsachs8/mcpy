@@ -25,11 +25,63 @@ import key
 import nbt
 
 
-world.list_worlds()
+#world.list_worlds()
+
+def find_world_by_name(name):
+    worlds = world.get_worlds()
+    for w in worlds:
+        if w[1] == name:
+            return w[0]
+    return None
+
+wname = find_world_by_name('World 65')
+print(wname)
+wt = world.World(wname)
+# print(wt.obj.nbt)
+wt.obj.nbt['commandsEnabled'] = 0
+wt.obj.nbt['hasBeenLoadedInCreative'] = 0
+wt.obj.save()
+#w.print_player_data()
+data = wt.db.get(b"~local_player")
+reader = binary.Reader(data)
+pt = nbt.decode(reader)
+# print(pt.Armor)
+#inventory = pt.Inventory
+
+print(pt)
+
+
+wname = find_world_by_name('Copy of World 65')
+print(wname)
+ws = world.World(wname)
+#print(ws.obj.nbt)
+data = ws.db.get(b"~local_player")
+reader = binary.Reader(data)
+ps = nbt.decode(reader)
+# print(ps)
+armor = ps.Armor
+inventory = ps.Inventory
+endchest = ps.EnderChestInventory
+
+print(ps)
+
+pt['Armor'] = armor
+pt['Inventory'] = inventory
+pt['EnderChestInventory'] = endchest
+writer = binary.Writer()
+nbt.encode(pt, writer)
+data = writer.get_data()
+wt.db.put(b"~local_player", data)
+wt.db.close()
+
+exit(0)
+
 
 wname = "4eFtYUGlAAA="
 # wname = "HOu3YcGsZwA="
 wname = "ceHVYYiJAAA="
+wname = "bb9mYuu-AAA="
+wname = "u6myZe0GFAA="
 w = world.World(wname)
 w.print_level_data()
 w.print_spawner_data()
@@ -102,7 +154,7 @@ def check(world):
             print(f"******** {k} --> {v} ********")
 
 
-check(w)
+# check(w)
 
 exit(0)
 
